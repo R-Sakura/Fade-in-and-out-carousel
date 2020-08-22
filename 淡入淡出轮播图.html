@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        ul,
+        li,
+        ol {
+            list-style: none;
+        }
+        
+        div {
+            width: 1000px;
+            height: 562px;
+            border: 2px solid #000;
+            margin: 100px auto;
+            position: relative;
+        }
+        
+        ul {
+            position: relative;
+        }
+        
+        ul li {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+        
+        ul>li>img {
+            width: 1000px;
+            height: 562px;
+        }
+        
+        ol {
+            width: 200px;
+            height: 20px;
+            position: absolute;
+            bottom: 30px;
+            right: 50px;
+            display: flex;
+        }
+        
+        li {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #9999;
+            margin-right: 10px;
+        }
+        
+        p {
+            color: #ffffff;
+            font-size: 25px;
+            position: absolute;
+            top: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+        
+        .left {
+            left: 0;
+        }
+        
+        .right {
+            right: 0;
+        }
+        
+        .active {
+            background-color: chocolate;
+        }
+    </style>
+    <title>Document</title>
+
+</head>
+
+<body>
+    <div class="box">
+        <ul>
+            <li style="opacity: 1;"><img src="./images/261f93de8ea0ac86e3fd0d835b377bbb.jpg" alt=""></li>
+            <li><img src="./images/29d307aa63280ab0ab6e9eddb7115ed8.jpg" alt=""></li>
+            <li><img src="./images/57b74da93e7f2a336d2ac43f9f42d78d.jpg" alt=""></li>
+            <li><img src="./images/58e82a5fb7fc77f2858c8f71f575cb67.jpg" alt=""></li>
+            <li><img src="./images/754fb00a551505a81030131ae28d0633.jpg" alt=""></li>
+        </ul>
+        <ol>
+        </ol>
+        <p class="left">上一张</p>
+        <p class="right">下一张</p>
+    </div>
+    <script src="./utils.js"></script>
+    <script>
+        const ul = my$("ul")[0],
+            box = my$(".box")[0],
+            ol = my$("ol")[0],
+            left = my$(".left")[0],
+            right = my$(".right")[0]
+        let ulis = my$("li", ul),
+            olis = null,
+            cricles = null,
+            nextIndex = 1,
+            curretIndex = 0
+        for (let i = 0; i < ulis.length; i++) {
+            let li = document.createElement("li")
+            li.className = i === 0 ? "active" : ""
+            ol.appendChild(li)
+        }
+        cricles = my$("li", ol)
+
+        function move() {
+            fadeIn(ulis[nextIndex], 2000)
+            fadeOut(ulis[curretIndex], 2000)
+            curretIndex = nextIndex
+            nextIndex++
+            if (nextIndex > ulis.length - 1) {
+                nextIndex = 0
+                    // curretIndex = ulis.length - 1
+            }
+            // 设置小圆点
+            let cricleIndex = curretIndex
+            for (let i = 0; i < cricles.length; i++) {
+                cricles[i].className = ""
+            }
+            cricles[cricleIndex].className = "active"
+        }
+        timer = setInterval(move, 2500)
+
+        on(box, "mouseenter", () => {
+            clearInterval(timer)
+        })
+        on(box, "mouseleave", () => {
+            timer = setInterval(move, 2500)
+        })
+        on(ol, "mouseover", (e) => {
+            e = e || window.event
+            const target = e.target || e.srcElement
+            if (target.nodeName === "LI") {
+                let index = Array.from(cricles).indexOf(target)
+                if (curretIndex != index) {
+                    nextIndex = index
+                    move()
+                }
+            }
+        })
+        on(right, "click", () => {
+            move()
+        })
+        on(left, "click", () => {
+            nextIndex = curretIndex - 1
+            if (nextIndex < 0) {
+                nextIndex = ulis.length - 1
+            }
+            move()
+        })
+    </script>
+</body>
+
+</html>
